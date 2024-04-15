@@ -1,0 +1,94 @@
+﻿version: '3.1'
+networks:
+  elasticnetwork:
+    driver: bridge
+
+services:
+  wa-mongo:
+    container_name: wa-mongo
+    image: mongo
+    restart: always
+    networks:      
+      - elasticnetwork
+    ports:
+      - ${MONGO_PORT}:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    volumes:
+      - wa-mongo:/data/db
+ 
+  # wa-mongo-express:
+  #   container_name: wa-mongo-express
+  #   image: mongo-express
+  #   restart: always
+  #   ports:
+  #     - ${MONGO_EXPRESS_PORT}:8081
+  #   environment:
+  #     ME_CONFIG_MONGODB_SERVER: wa-mongo-express
+  #     ME_CONFIG_MONGODB_PORT: 27017
+  #     ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+  #     ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+  #   depends_on:
+  #     - wa-mongo
+      
+  wa-sqlserver:
+    container_name: wa-sqlserver
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    networks:      
+      - elasticnetwork
+    ports:
+      - ${SQL_PORT}:1433
+    environment:
+      SA_PASSWORD: ${SQL_SA_PASS}
+      ACCEPT_EULA: "Y"
+    volumes:
+      - wa-sqldata:/var/opt/mssql
+
+  wa-elasticsearch:
+    container_name: wa-elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELK_STACK_VERSION}
+    networks:      
+      - elasticnetwork
+    ports:
+      - ${ES_PORT}:9200
+    volumes:
+      - wa-els01-data:/usr/share/elasticsearch/data
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+      - xpack.watcher.enabled=false
+      - xpack.monitoring.collection.enabled=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+  
+  wa-kibana:
+    container_name: wa-kibana
+    networks:      
+      - elasticnetwork
+    depends_on:
+      - wa-elasticsearch
+    image: docker.elastic.co/kibana/kibana:${ELK_STACK_VERSION}
+    ports:
+      - ${KIBANA_PORT}:5601
+    environment:
+      - ELASTICSEARCH_URL=http://localhost:9200 
+
+  # wablobstorage:
+    # container_name: wablobstorage
+    # image: mcr.microsoft.com/azure-storage/azurite
+    # command: "azurite --loose --blobHost 0.0.0.0 --blobPort 10000 --queueHost 0.0.0.0 --queuePort 10001 --location /workspace --debug /workspace/debug.log"        
+    # ports:
+    #   - 10010:10000
+    #   - 10011:10001
+    #   - 10012:10002
+    # volumes: 
+    # - ./wa-azurite:/workspace
+    # networks:      
+    #   - elasticnetwork
+
+volumes:
+  wa-els01-data:
+  wa-sqldata:
+  # wa-azurite:
+  wa-mongo:
+  

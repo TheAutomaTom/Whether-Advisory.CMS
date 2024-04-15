@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WA.CMS.Data", "WA.CMS.Data\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WA.CMS.Domain", "WA.CMS.Domain\WA.CMS.Domain.csproj", "{238909D3-748F-4F23-80D9-189C88778FA8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WA.CMS.Api.Tests.Integration", "WA.CMS.Api.Tests.Integration\WA.CMS.Api.Tests.Integration.csproj", "{7655C0B4-A0D0-4C07-A4F1-4870D1E19502}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WA.CMS.Tests.Integration", "WA.CMS.Api.Tests.Integration\WA.CMS.Tests.Integration.csproj", "{7655C0B4-A0D0-4C07-A4F1-4870D1E19502}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

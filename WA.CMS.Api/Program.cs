@@ -1,4 +1,3 @@
-
 namespace WA.Api
 {
   public class Program
