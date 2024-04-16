@@ -1,3 +1,6 @@
+using Serilog;
+using WA.CMS.Domain.Config;
+
 namespace WA.Api
 {
   public class Program
@@ -5,13 +8,23 @@ namespace WA.Api
     public static void Main(string[] args)
     {
       var builder = WebApplication.CreateBuilder(args);
+      var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+      var config = new ConfigurationBuilder()
+        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+        .AddJsonFile($"appsettings.{env}.json", optional: true
+        ).Build();
 
       // Add services to the container.
 
       builder.Services.AddControllers();
-      // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
       builder.Services.AddEndpointsApiExplorer();
       builder.Services.AddSwaggerGen();
+
+      // Logger
+      builder.Services.ConfigureLogging(config, env ??= "Local");
+      builder.Host.UseSerilog();
+
 
       var app = builder.Build();
 
